@@ -1,0 +1,358 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Page Info  -->
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">Dashboard</h1>
+    <p class="text-gray-400 mt-1">Hoşgeldiniz, sistemdeki özet verileri buradan anlık takip edebilirsiniz.</p>
+</div>
+
+@await Component.InvokeAsync("_DashboardFinancialMetricsComponentPartial")
+
+<!-- AI Dashboard Advice  -->
+<div class="my-6">
+    @await Component.InvokeAsync("_DashboardAdviceOfAIComponentPartial")
+</div>
+
+@await Component.InvokeAsync("_DashboardGraphicsComponentPartial")
+
+@await Component.InvokeAsync("_DashboardMapComponentPartial")
+
+@await Component.InvokeAsync("_DashboardListsComponentPartial")
+
+
+
+@* Console.Log should be removed from product environment. (Console.Log canlı ortamda kaldırılmalıdır.) *@
+@section Scripts {
+   
+    <script>
+        // SSE Client - Financial Metrics (SSE İstemcisi - Finansal Metrikler)
+        (function() {
+            // 1️⃣ Create EventSource (SSE connection) (EventSource oluştur (SSE bağlantısı))
+            const eventSource = new EventSource('/Dashboard/StreamFinancialMetrics');
+
+            // 2️⃣ Function to run when a message is received (Mesaj geldiğinde çalışacak fonksiyon)
+            eventSource.onmessage = function(event) {
+                // Parse the incoming JSON (Gelen JSON'u parse et)
+                const data = JSON.parse(event.data);
+
+                //console.log('📊 New data received (Yeni veri geldi):', data);
+
+                // 3️⃣ Update the DOM (DOM'u Güncelle)
+                updateMetric('total-revenue', formatCurrency(data.totalRevenue));
+                updateMetric('total-profit', formatCurrency(data.totalProfit));
+                updateMetric('total-orders', data.totalOrders);
+                updateMetric('avg-basket', formatCurrency(data.averageBasketAmount));
+            };
+
+            // 4️⃣ In case of error (Hata olursa)
+            eventSource.onerror = function(error) {
+                console.error('❌ SSE Hatası:', error);
+                // Connection will be automatically retried (Bağlantı otomatik yeniden denenecek)
+            };
+
+            // 5️⃣ Close connection when the page is closed (Sayfa kapatıldığında bağlantıyı kes)
+            window.addEventListener('beforeunload', function() {
+                eventSource.close();
+            });
+
+            // 📝 Helper Functions (Yardımcı Fonksiyonlar)
+
+            // Update DOM element (DOM elementini güncelle)
+            function updateMetric(id, value) {
+                const element = document.getElementById(id);
+                if (element) {
+                    // For smooth transition (Smooth transition için)
+                    element.style.transition = 'opacity 0.3s';
+                    element.style.opacity = '0.5';
+
+                    setTimeout(() => {
+                        element.textContent = value;
+                        element.style.opacity = '1';
+                    }, 150);
+                }
+            }
+
+            // Currency format (Turkish Lira) (Para formatı (Türk Lirası))
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('fr-FR', {
+                    style: 'currency',
+                    currency: 'EUR',
+                    minimumFractionDigits: 2
+                }).format(amount);
+            }
+        })();
+
+        // SSE Client - AI Advice (Minimal API + yield return) (SSE İstemcisi - Yapay Zeka Tavsiyesi (Minimal API + yield return))
+        (function() {
+            const aiEventSource = new EventSource('/sse/ai-advice');
+
+            aiEventSource.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                // console.log('🤖 New AI advice (Yeni AI tavsiyesi):', data.advice);
+
+                // Update AI advice (Yapay zeka tavsiyesini güncelle)
+                const aiElement = document.getElementById('ai-advice-text');
+                if (aiElement) {
+                    // Typing effect (print character by character) (Typing effect (karakter karakter yazdır))
+                    aiElement.style.opacity = '0';
+
+                    setTimeout(() => {
+                        aiElement.textContent = data.advice;
+                        aiElement.style.transition = 'opacity 0.5s';
+                        aiElement.style.opacity = '1';
+                    }, 300);
+                }
+            };
+
+            aiEventSource.onerror = function(error) {
+                console.error('❌ AI SSE Hatası:', error);
+            };
+
+            window.addEventListener('beforeunload', function() {
+                aiEventSource.close();
+            });
+        })();
+
+        // SSE Client - Graphics (SSE İstemcisi - Grafikler)
+        (function() {
+              const eventSource = new EventSource('/Dashboard/StreamGraphics');
+
+              // Helper function to update charts (DRY principle) (Grafikleri güncellemek için yardımcı fonksiyon (DRY prensibi))
+              function updateChart(chartName, labels, values) {
+                  const chart = window[chartName];
+                  if (chart && labels && values) {
+                      chart.data.labels = labels;
+                      chart.data.datasets[0].data = values;
+                      // 'none' mode = no animation, better performance for real-time updates ('none' modu = animasyon yok, gerçek zamanlı güncellemeler için daha iyi performans)
+                      chart.update('none');
+                      return true;
+                  }
+                  return false;
+              }
+
+              eventSource.onmessage = function(event) {
+                  try {
+                      const data = JSON.parse(event.data);
+                      // console.log('📊 New chart data (Yeni grafik verisi):', data);
+
+                      // Update all charts using the helper function
+                      updateChart('salesTrendChart', data.chartLabels, data.chartValues);
+                      updateChart('fiveYearChart', data.fiveYearLabels, data.fiveYearValues);
+                      updateChart('categoryChart', data.topCategoryNames, data.topCategoryProductCounts);
+                      updateChart('paymentChart', data.paymentMethods, data.paymentMethodCounts);
+
+                  } catch (err) {
+                      console.error('📊 Grafik güncelleme hatası:', {
+                          error: err.message,
+                          timestamp: new Date().toISOString()
+                      });
+                  }
+              };
+
+              eventSource.onerror = function(error) {
+                  console.error('❌ SSE Grafik Hatası:', error);
+                  eventSource.close();
+              };
+
+              window.addEventListener('beforeunload', function() {
+                  eventSource.close();
+              });
+          })();
+
+        // SSE Client - Map Data (SSE İstemcisi - Harita Verileri)
+        (function() {
+            const eventSource = new EventSource('/Dashboard/StreamMapData');
+            let markers = []; // Store markers for cleanup
+
+            eventSource.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                   // console.log('🗺️ New map data (Yeni harita verisi):', data.topCountries);
+
+                    // Update map markers if map exists (Harita varsa harita işaretçilerini güncelle)
+                    if (window.dashboardMap && data.topCountries) {
+                        // Clear existing markers (Mevcut işaretçileri temizle)
+                        markers.forEach(marker => window.dashboardMap.removeLayer(marker));
+                        markers = [];
+
+                        // Add new markers (Yeni işaretçiler ekle)
+                        data.topCountries.forEach(function(loc) {
+                            if (loc.latitude !== 0 && loc.longitude !== 0) {
+                                const marker = L.marker([loc.latitude, loc.longitude]).addTo(window.dashboardMap);
+                                marker.bindPopup(`
+                                    <div class="text-center">
+                                        <h4 class="font-bold text-gray-800">${loc.countryName}</h4>
+                                        <p class="text-blue-600 font-bold text-lg m-0">${loc.orderCount} Sipariş</p>
+                                    </div>
+                                `);
+                                markers.push(marker);
+                            }
+                        });
+
+                        // Update country list in sidebar (if exists) (Kenar çubuğundaki ülke listesini güncelle (varsa))
+                        updateCountryList(data.topCountries);
+                    }
+                } catch (err) {
+                    console.error('🗺️ Harita güncelleme hatası:', {
+                        error: err.message,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            };
+
+            eventSource.onerror = function(error) {
+                console.error('❌ SSE Harita Hatası:', error);
+                eventSource.close();
+            };
+
+            window.addEventListener('beforeunload', function() {
+                eventSource.close();
+            });
+
+            // Helper function to update country list (Ülke listesini güncellemek için yardımcı fonksiyon)
+            function updateCountryList(countries) {
+                // This would update the sidebar list if you want real-time updates there too
+                // For now, we'll skip this as the component renders server-side
+                // You can implement this if you want the list to update dynamically
+            }
+        })();
+
+        // SSE Client - Lists (SSE İstemcisi - Listeler)
+        (function() {
+            const eventSource = new EventSource('/Dashboard/StreamTopLists');
+
+            eventSource.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    //console.log('📋 New list data (Yeni liste verisi):', data);
+
+                    // Update Top Selling Products table (En Çok Satan Ürünler tablosunu güncelle)
+                    if (data.topSellingProducts) {
+                        updateTopSellingTable(data.topSellingProducts);
+                    }
+
+                    // Update Low Stock Products table (Düşük Stoklu Ürünler tablosunu güncelle)
+                    if (data.lowStockProducts) {
+                        updateLowStockTable(data.lowStockProducts);
+                    }
+
+                } catch (err) {
+                    console.error('📋 Liste güncelleme hatası:', {
+                        error: err.message,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+            };
+
+            eventSource.onerror = function(error) {
+                console.error('❌ SSE Liste Hatası:', error);
+                eventSource.close();
+            };
+
+            window.addEventListener('beforeunload', function() {
+                eventSource.close();
+            });
+
+            // Helper: Update Top Selling Products Table (Yardımcı: En Çok Satan Ürünler Tablosunu Güncelle)
+            function updateTopSellingTable(products) {
+                const tbody = document.querySelector('table tbody');
+                if (!tbody) return;
+
+                // Find the top selling products table (first table in the lists section) (En çok satan ürünler tablosunu bulun (listeler bölümündeki ilk tablo))
+                const tables = document.querySelectorAll('.bg-dark-800 table tbody');
+                if (tables.length === 0) return;
+                
+                const topSellingTbody = tables[0];
+                
+                if (products.length === 0) {
+                    topSellingTbody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-gray-500 text-sm">Veri bulunamadı.</td></tr>';
+                    return;
+                }
+
+                topSellingTbody.innerHTML = products.map(item => `
+                    <tr class="hover:bg-dark-700/30 transition-colors group border-b border-dark-700/50 last:border-0">
+                        <td class="py-3 pl-2">
+                            <div class="flex items-center gap-3">
+                                ${item.imageUrl ? 
+                                    `<img src="${item.imageUrl}" alt="${item.productName}" class="h-10 w-10 rounded-lg object-cover border border-dark-600 group-hover:border-amber-500/50 transition-colors" />` :
+                                    `<div class="h-10 w-10 rounded-lg bg-dark-700 flex items-center justify-center text-gray-500"><i class="fa-solid fa-box"></i></div>`
+                                }
+                                <div>
+                                    <p class="font-medium text-white text-sm">${item.productName}</p>
+                                    <p class="text-xs text-gray-500">${item.categoryName}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3 text-center">
+                            <span class="inline-flex items-center justify-center px-2 py-1 bg-amber-500/10 text-amber-500 text-xs font-bold rounded-full min-w-[30px]">
+                                ${item.totalSold}
+                            </span>
+                        </td>
+                        <td class="py-3 text-right pr-2">
+                            <span class="text-gray-300 text-sm font-mono">${formatCurrency(item.totalRevenue)}</span>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Helper: Update Low Stock Products Table (Yardımcı: Düşük Stoklu Ürünler Tablosunu Güncelle)
+            function updateLowStockTable(products) {
+                const tables = document.querySelectorAll('.bg-dark-800 table tbody');
+                if (tables.length < 2) return;
+                
+                const lowStockTbody = tables[1];
+                
+                if (products.length === 0) {
+                    lowStockTbody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-gray-500 text-sm">Kritik stok uyarısı yok.</td></tr>';
+                    return;
+                }
+
+                lowStockTbody.innerHTML = products.map(item => {
+                    const percentage = Math.min((item.stockQuantity / 20.0) * 100, 100);
+                    const colorClass = item.stockQuantity <= 5 ? 'bg-red-500' : 'bg-orange-500';
+                    const statusText = item.stockQuantity === 0 ? '<span class="text-red-500 font-bold">Tükendi</span>' :
+                                      item.stockQuantity <= 5 ? '<span class="text-red-400">Çok Kritik</span>' :
+                                      '<span>Azalıyor</span>';
+
+                    return `
+                        <tr class="hover:bg-dark-700/30 transition-colors group border-b border-dark-700/50 last:border-0">
+                            <td class="py-3 pl-2">
+                                <div class="flex items-center gap-3">
+                                    ${item.imageUrl ? 
+                                        `<img src="${item.imageUrl}" alt="${item.productName}" class="h-10 w-10 rounded-lg object-cover border border-dark-600 group-hover:border-red-500/50 transition-colors" />` :
+                                        `<div class="h-10 w-10 rounded-lg bg-dark-700 flex items-center justify-center text-gray-500"><i class="fa-solid fa-box"></i></div>`
+                                    }
+                                    <span class="font-medium text-white text-sm truncate max-w-[150px]">${item.productName}</span>
+                                </div>
+                            </td>
+                            <td class="py-3">
+                                <div class="w-full bg-dark-900 rounded-full h-1.5 mb-1 border border-dark-700">
+                                    <div class="${colorClass} h-1.5 rounded-full" style="width: ${percentage}%"></div>
+                                </div>
+                                <span class="text-[10px] text-gray-500">${statusText}</span>
+                            </td>
+                            <td class="py-3 text-right pr-2">
+                                <span class="inline-flex items-center justify-center px-2 py-1 bg-red-500/10 text-red-500 text-xs font-bold rounded-lg min-w-[30px]">
+                                    ${item.stockQuantity}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Helper: Format currency (Yardımcı: Para birimini biçimlendir)
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('fr-FR', {
+                    style: 'currency',
+                    currency: 'EUR',
+                    minimumFractionDigits: 2
+                }).format(amount);
+            }
+        })();
+
+    </script>
+}

@@ -1,0 +1,108 @@
+﻿<aside id="sidebar" class="fixed md:relative z-40 w-64 h-full bg-dark-800 border-r border-dark-700 flex flex-col transition-all duration-300 transform -translate-x-full md:translate-x-0 md:w-64 pt-20 md:pt-0">
+    <div class="p-6 flex items-center justify-center border-b border-dark-700">
+        <i class="fa-solid fa-magnifying-glass-chart text-3xl text-primary mr-4 "></i>
+        <span class="text-3xl font-bold tracking-wider text-white">SUNO</span>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto py-4">
+        <ul class="space-y-2 px-4">
+
+            <li>
+                <a href="/Dashboard/Index"
+                   class="flex items-center p-3 rounded-xl bg-primary/10 text-primary border border-primary/20 transition-all hover:bg-primary/20">
+                    <i class="fa-solid fa-house w-6 text-center"></i>
+                    <span class="ml-3 font-medium">Dashboard</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/Statistics/Index"
+                   class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all ">
+                    <i class="fa-solid fa-th w-6 text-center"></i>
+                    <span class="ml-3 font-medium">İstatistikler</span>
+                </a>
+            </li>
+
+            <!-- Tree Menu Item (Ağaç Menü Öğesi) -->
+            <li>
+                <button type="button" class="flex items-center w-full p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all justify-between group" onclick="$(this).next('ul').slideToggle(200); $(this).find('.arrow-icon').toggleClass('rotate-180');">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-bar-chart w-6 text-center group-hover:text-primary transition-colors"></i>
+                        <span class="ml-3 font-medium"> Analizler (AI) </span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-xs transition-transform duration-200 arrow-icon"></i>
+                </button>
+                <ul class="hidden pl-4 mt-1 space-y-1 bg-dark-900/50 rounded-lg py-1 border border-dark-700/50">
+
+                    <li>
+                        <a href="/Forecast/OrderForecasts" class="flex items-center p-2 mr-3 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 text-sm transition-all">
+                            <i class="fa-solid fa-shopping-cart w-6 text-center text-xs opacity-70"></i>
+                            <span class="font-medium">Sipariş Analizleri</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/Forecast/ReviewForecasts" class="flex items-center p-2 mr-3 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 text-sm transition-all">
+                            <i class="fa-solid fa-comments w-6 text-center text-xs opacity-70"></i>
+                            <span class="font-medium">Değerlendirme Analizleri</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="/Category/CategoryList"
+                   class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                    <i class="fa-solid fa-layer-group  w-6 text-center"></i>
+                    <span class="ml-3 font-medium">Kategoriler</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/Product/ProductList"
+                   class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                    <i class="fa-solid fa-cubes w-6 text-center"></i>
+                    <span class="ml-3 font-medium">Ürünler</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/Order/OrderList"
+                   class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                    <i class="fa-solid fa-shopping-cart w-6 text-center"></i>
+                    <span class="ml-3 font-medium">Siparişler</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/Customer/CustomerList"
+                   class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                    <i class="fa-solid fa-users w-6 text-center"></i>
+                    <span class="ml-3 font-medium">Müşteriler</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="/Review/ReviewList"
+                   class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                    <i class="fa-solid fa-comments w-6 text-center"></i>
+                    <span class="ml-3 font-medium">Değerlendirmeler</span>
+                </a>
+
+
+
+        </ul>
+    </nav>
+    <!-- Profile (Profil) -->
+  @*   <div class="p-4 border-t border-dark-700">
+        <div class="flex items-center gap-3">
+            <img class="h-10 w-10 rounded-full object-cover border-2 border-primary"
+                 src="https://ui-avatars.com/api/?name=Admin+User&background=random&color=fff"
+                 alt="Admin Profile">
+            <div>
+                <p class="text-sm font-medium text-white">Admin User</p>
+                <p class="text-xs text-gray-500">View Profile</p>
+            </div>
+        </div>
+    </div> *@
+</aside>

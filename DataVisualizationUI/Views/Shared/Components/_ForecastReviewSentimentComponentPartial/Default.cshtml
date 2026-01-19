@@ -1,0 +1,175 @@
+﻿@model DataVisualizationUI.Models.ForecastViewModels.ReviewForecastViewModels.ReviewSentimentViewModel
+
+<div class="bg-dark-800 rounded-2xl shadow-xl overflow-hidden h-full flex flex-col border border-dark-700/50">
+    <div class="px-6 py-4 border-b border-dark-700/50 flex items-center justify-between bg-dark-800/50 backdrop-blur-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                <i class="fas fa-heart text-white text-lg"></i>
+            </div>
+            <div>
+                <h6 class="text-white font-bold text-lg leading-tight">Müşteri Değerlendirme Duygu Analizi</h6>
+
+            </div>
+        </div>
+        
+
+    </div>
+
+    <div class="p-6 flex-1 flex flex-col overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+            <!-- Left Side: Chart (Sol Taraf: Grafik) -->
+            <div class="lg:col-span-5 flex flex-col items-center justify-center relative min-h-[220px]">
+                <!-- Decorative Glow (Dekoratif Parlama) -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-purple-500/10 rounded-full blur-3xl opacity-50"></div>
+                
+                <div class="relative w-48 h-48">
+                    <canvas id="sentimentChart"></canvas>
+                    <!-- Center Text (Merkezi Metin) -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-3xl font-bold text-white tracking-tight">@Model.PositivePercentage%</span>
+                        <span class="text-dark-400 text-xs font-medium uppercase tracking-wider mt-1">Mutluluk</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Stats & List (Sağ Taraf: İstatistikler ve Liste) -->
+            <div class="lg:col-span-7 flex flex-col h-full">
+                <!-- Stats Cards (İstatistik Kartları) -->
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="bg-dark-900/50 rounded-xl p-3 border border-dark-700 hover:border-green-500/30 transition-colors group">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-dark-400 text-xs font-medium group-hover:text-green-400 transition-colors">Pozitif</span>
+                            <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
+                        </div>
+                        <div class="text-xl font-bold text-white">@Model.PositivePercentage%</div>
+                    </div>
+                    <div class="bg-dark-900/50 rounded-xl p-3 border border-dark-700 hover:border-red-500/30 transition-colors group">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-dark-400 text-xs font-medium group-hover:text-red-400 transition-colors">Negatif</span>
+                            <div class="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></div>
+                        </div>
+                        <div class="text-xl font-bold text-white">@Model.NegativePercentage%</div>
+                    </div>
+                </div>
+
+                <!-- Recent Reviews List (Son Değerlendirmeler Listesi) -->
+                <div class="flex-1 min-h-0 flex flex-col">
+                    <h6 class="text-dark-300 text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <i class="fas fa-history text-indigo-400"></i>
+                        Son Analizler
+                    </h6>
+                    
+                    <div class="overflow-y-auto custom-scrollbar flex-1 pr-2 space-y-3">
+                        @foreach (var review in Model.RecentReviews.Take(4))
+                        {
+                            <div class="group bg-dark-900/30 hover:bg-dark-900/80 rounded-xl p-3 border border-dark-700 hover:border-indigo-500/30 transition-all duration-300">
+                                <div class="flex items-start gap-3">
+                                    <div class="mt-1 w-8 h-8 rounded-lg flex items-center justify-center shrink-0 @(review.Sentiment == "Positive" ? "bg-green-500/10 text-green-400 shadow-[0_0_10px_rgba(34,197,94,0.1)]" : "bg-red-500/10 text-red-400 shadow-[0_0_10px_rgba(239,68,68,0.1)]")">
+                                        <i class="fas @(review.Sentiment == "Positive" ? "fa-smile" : "fa-frown-open") text-sm"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-0.5">
+                                            <h6 class="text-white text-sm font-semibold truncate group-hover:text-indigo-400 transition-colors">@review.CustomerName</h6>
+                                            <span class="text-[10px] text-dark-500 bg-dark-800 px-1.5 py-0.5 rounded border border-dark-700">@review.Date.ToString("dd MMM")</span>
+                                        </div>
+                                        <p class="text-dark-400 text-xs line-clamp-2 leading-relaxed">@review.ReviewText</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        var canvas = document.getElementById("sentimentChart");
+        var ctx = canvas.getContext("2d");
+
+        // Robust Destroy: Use a global variable to track the instance explicitly
+        if (window.sentimentChartInstance) {
+            window.sentimentChartInstance.destroy();
+        }
+
+        // Chart defaults
+        if (typeof Chart !== 'undefined') {
+             Chart.defaults.color = '#94a3b8';
+             Chart.defaults.font.family = "'Inter', sans-serif";
+        }
+
+        // Gradient for positive
+        var gradientPos = ctx.createLinearGradient(0, 0, 0, 200);
+        gradientPos.addColorStop(0, '#4ade80');
+        gradientPos.addColorStop(1, '#22c55e');
+        
+        // Gradient for negative
+        var gradientNeg = ctx.createLinearGradient(0, 0, 0, 200);
+        gradientNeg.addColorStop(0, '#f87171');
+        gradientNeg.addColorStop(1, '#ef4444');
+
+        // Create and store instance globally
+        window.sentimentChartInstance = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: ["Pozitif", "Negatif"],
+                datasets: [{
+                    label: "Sentiment",
+                    weight: 9,
+                    cutout: '75%',
+                    tension: 0.9,
+                    pointRadius: 0,
+                    borderWidth: 0,
+                    hoverBorderWidth: 0,
+                    backgroundColor: [gradientPos, gradientNeg],
+                    hoverBackgroundColor: ['#86efac', '#fca5a5'],
+                    hoverOffset: 4,
+                    data: [@Model.PositivePercentage.ToString(System.Globalization.CultureInfo.InvariantCulture), @Model.NegativePercentage.ToString(System.Globalization.CultureInfo.InvariantCulture)],
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 2000,
+                    easing: 'easeOutQuart'
+                },
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#cbd5e1',
+                        padding: 10,
+                        cornerRadius: 8,
+                        displayColors: true,
+                        boxPadding: 4,
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'nearest',
+                },
+            },
+        });
+    })();
+</script>

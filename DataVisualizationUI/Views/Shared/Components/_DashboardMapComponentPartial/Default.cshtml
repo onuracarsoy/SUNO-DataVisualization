@@ -1,0 +1,71 @@
+﻿@using DataVisualizationUI.Models.DashboardViewModels
+@model DashboardMapViewModel
+
+<div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <h3 class="text-white font-bold text-lg flex items-center gap-2">
+            <i class="fa-solid fa-earth-americas text-blue-500"></i> Küresel Satış Dağılımı (Top 5 Ülke)
+        </h3>
+        <span class="text-gray-400 text-sm">En çok sipariş alınan lokasyonlar</span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Map Container (Harita Konteynırı) -->
+        <div class="lg:col-span-3 h-96 rounded-xl overflow-hidden border border-dark-700 relative z-0">
+             <div id="dashboardMap" class="w-full h-full"></div>
+        </div>
+
+        <!-- Top Country List (En Çok Sipariş Alan Ülke Listesi) -->
+        <div class="lg:col-span-1 flex flex-col justify-center gap-4">
+            @if(Model.TopCountries != null && Model.TopCountries.Any())
+            {
+                var index = 1;
+                foreach (var item in Model.TopCountries)
+                {
+                     <div class="bg-dark-900/50 p-4 rounded-lg border border-dark-700 flex items-center justify-between hover:border-blue-500/30 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span class="w-6 h-6 rounded-full bg-blue-500/20 text-blue-500 flex items-center justify-center text-xs font-bold">@index</span>
+                            <span class="text-gray-200 font-medium">@item.CountryName</span>
+                        </div>
+                        <span class="text-white font-bold">@item.OrderCount <span class="text-gray-500 text-xs font-normal">Sipariş</span></span>
+                    </div>
+                    index++;
+                }
+            }
+            else
+            {
+                <div class="text-gray-500 text-center">Veri yok.</div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Map and expose it globally for SSE updates (Haritayı başlat ve SSE güncellemeleri için genel olarak erişilebilir yap)
+        window.dashboardMap = L.map('dashboardMap').setView([20, 0], 2); // World View centered
+
+        // Dark Theme Tile Layer (CartoDB Dark Matter) (Koyu Tema Karo Katmanı (CartoDB Dark Matter))
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(window.dashboardMap);
+
+        // Add Markers (İşaretçileri Ekle)
+        var locations = @Html.Raw(Json.Serialize(Model.TopCountries));
+        
+        locations.forEach(function(loc) {
+            if(loc.latitude !== 0 && loc.longitude !== 0) {
+                 var marker = L.marker([loc.latitude, loc.longitude]).addTo(window.dashboardMap);
+                 marker.bindPopup(`
+                    <div class="text-center">
+                        <h4 class="font-bold text-gray-800">${loc.countryName}</h4>
+                        <p class="text-blue-600 font-bold text-lg m-0">${loc.orderCount} Sipariş</p>
+                    </div>
+                 `);
+            }
+        });
+    });
+</script>
+

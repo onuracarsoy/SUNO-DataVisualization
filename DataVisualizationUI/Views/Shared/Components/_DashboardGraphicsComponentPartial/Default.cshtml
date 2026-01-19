@@ -1,0 +1,164 @@
+﻿@using DataVisualizationUI.Models.DashboardViewModels
+@model DashboardGraphicsViewModel
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    
+    <!-- Sales Trend Charts (Stacked) (Satış Trendi Grafikleri (Üst Üste)) -->
+    <div class="lg:col-span-2 flex flex-col gap-6">
+        
+        <!-- 12 Month Trend (12 Aylık Trend) -->
+        <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg">
+            <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-line text-primary"></i> Yıllık Satış Özeti (Son 12 Ay)
+            </h3>
+            <div class="w-full h-64">
+                <canvas id="salesTrendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 5 Year Overview (5 Yıllık Genel Bakış) -->
+        <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg">
+             <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-simple text-orange-500"></i> Uzun Dönem Analiz (Son 5 Yıl)
+            </h3>
+            <div class="w-full h-64">
+                <canvas id="fiveYearChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right Side Charts (Sağ Taraf Grafikleri) -->
+    <div class="flex flex-col gap-6">
+        
+        <!-- Category Distribution (Pie Chart) (Kategori Dağılımı (Pasta Grafik)) -->
+        <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg flex-1">
+            <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-chart-pie text-emerald-500"></i> Kategori Dağılımı
+            </h3>
+            <div class="w-full h-64 flex justify-center items-center">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Payment Methods (Doughnut Chart) (Ödeme Yöntemleri (Halka Grafik)) -->
+        <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg flex-1">
+             <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-wallet text-indigo-500"></i> Ödeme Yöntemleri
+            </h3>
+            <div class="w-full h-64 flex justify-center items-center">
+                <canvas id="paymentMethodChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // --- 1. Sales Trend Chart (1. Satış Trendi Grafiği) ---
+        const ctxSales = document.getElementById('salesTrendChart').getContext('2d');
+        const gradientSales = ctxSales.createLinearGradient(0, 0, 0, 400);
+        gradientSales.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
+        gradientSales.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+
+        window.salesTrendChart = new Chart(ctxSales, {
+            type: 'line',
+            data: {
+               
+                labels: @Html.Raw(Json.Serialize(Model?.ChartLabels ?? new List<string>())),
+                datasets: [{
+                    label: 'Sipariş Sayısı',
+                    data: @Html.Raw(Json.Serialize(Model?.ChartValues ?? new List<int>())),
+                    borderColor: '#6366f1',
+                    backgroundColor: gradientSales,
+                    borderWidth: 3,
+                    tension: 0.4,
+                    pointBackgroundColor: '#1f2937',
+                    pointBorderColor: '#6366f1',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#374151' }, ticks: { color: '#9ca3af', precision: 0 } },
+                    x: { grid: { display: false }, ticks: { color: '#9ca3af' } }
+                }
+            }
+        });
+
+        // --- 2. Five Year Chart (2. Beş Yıllık Grafik) ---
+        const ctxFiveYear = document.getElementById('fiveYearChart').getContext('2d');
+
+   
+        window.fiveYearChart = new Chart(ctxFiveYear, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model?.FiveYearLabels ?? new List<string>())),
+                datasets: [{
+                    label: 'Yıllık Satış',
+                    data: @Html.Raw(Json.Serialize(Model?.FiveYearValues ?? new List<int>())),
+                    backgroundColor: '#f97316',
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#374151' }, ticks: { color: '#9ca3af', precision: 0 } },
+                    x: { grid: { display: false }, ticks: { color: '#9ca3af' } }
+                }
+            }
+        });
+
+        // --- 3. Category Chart (3. Kategori Grafiği) ---
+        window.categoryChart = new Chart(document.getElementById('categoryChart'), {
+            type: 'pie',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model?.TopCategoryNames ?? new List<string>())),
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(Model?.TopCategoryProductCounts ?? new List<int>())),
+                    backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { color: '#9ca3af', boxWidth: 12 } }
+                }
+            }
+        });
+
+        // --- 4. Payment Method Chart (4. Ödeme Yöntemi Grafiği) ---
+        window.paymentChart = new Chart(document.getElementById('paymentMethodChart'), {
+            type: 'doughnut',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model?.PaymentMethods ?? new List<string>())),
+                datasets: [{
+                    data: @Html.Raw(Json.Serialize(Model?.PaymentMethodCounts ?? new List<int>())),
+                     backgroundColor: ['#6366f1', '#ec4899', '#14b8a6', '#64748b', '#f43f5e'],
+                    borderWidth: 0,
+                    cutout: '70%'
+                }]
+            },
+             options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { color: '#9ca3af', boxWidth: 12 } }
+                }
+            }
+        });
+    });
+</script>

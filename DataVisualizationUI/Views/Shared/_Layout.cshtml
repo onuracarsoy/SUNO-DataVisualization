@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="tr" class="dark">
+
+    @await Component.InvokeAsync("_LayoutHeadComponentPartial")
+
+<body class="bg-dark-900 text-gray-300 font-sans antialiased overflow-hidden">
+
+    <div class="flex h-screen">
+        <!-- Sidebar (Kenar Çubuğu) -->
+        @await Component.InvokeAsync("_LayoutSidebarComponentPartial")
+
+        <!-- Main Content (Ana İçerik) -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+
+            <!-- Header (Üst Bilgi) -->
+            @await Component.InvokeAsync("_LayoutHeaderComponentPartial")
+
+            <!-- Dashboard Content (Dashboard İçeriği) -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-dark-900 p-6 pt-20 md:pt-6 flex flex-col">
+                <div class="flex-1">
+                    @RenderBody()
+                </div>
+
+                <footer class="text-center text-dark-700 text-sm mt-8 border-t border-dark-700 pt-6">
+                    &copy; @DateTime.Now.Year.ToString() SUNO. All rights reserved.
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    
+    @await Component.InvokeAsync("_LayoutScriptComponentPartial")
+    
+    @RenderSection("Scripts", required: false)
+
+</body>
+
+</html>

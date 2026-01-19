@@ -1,0 +1,237 @@
+﻿
+@{
+    ViewData["Title"] = "İstatistikler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Page Info  -->
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">İstatistikler</h1>
+    <p class="text-gray-400 mt-1">Sistemdeki tüm sayısal verileri buradan anlık takip edebilirsiniz.</p>
+</div>
+
+<!-- Main Statistics -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Total Category  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg hover:shadow-indigo-500/10 hover:border-indigo-500/50 transition-all duration-300 group">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Toplam Kategori</p>
+                <h3 class="text-3xl font-bold text-white mt-2">@ViewBag.CategoryCount</h3>
+            </div>
+            <div class="p-3 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                <i class="fa-solid fa-layer-group text-xl"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Total Product  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg hover:shadow-blue-500/10 hover:border-blue-500/50 transition-all duration-300 group">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Toplam Ürün</p>
+                <h3 class="text-3xl font-bold text-white mt-2">@ViewBag.ProductCount</h3>
+            </div>
+            <div class="p-3 rounded-lg bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                <i class="fa-solid fa-cubes text-xl"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Total Customer ( -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg hover:shadow-purple-500/10 hover:border-purple-500/50 transition-all duration-300 group">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Toplam Müşteri</p>
+                <h3 class="text-3xl font-bold text-white mt-2">@ViewBag.CustomerCount</h3>
+            </div>
+            <div class="p-3 rounded-lg bg-purple-500/10 text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                <i class="fa-solid fa-users text-xl"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Total Order  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-500/50 transition-all duration-300 group">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-gray-400 text-xs font-semibold uppercase tracking-wider">Toplam Sipariş</p>
+                <h3 class="text-3xl font-bold text-white mt-2">@ViewBag.OrderCount</h3>
+            </div>
+            <div class="p-3 rounded-lg bg-emerald-500/10 text-emerald-400 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+                <i class="fa-solid fa-cart-shopping text-xl"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<h2 class="text-xl font-bold text-white mb-4 pl-1 flex items-center gap-2">
+    <i class="fa-solid fa-level-up text-gray-400"></i> En'ler
+</h2>
+
+<!-- Highlighted Insights Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    
+
+
+    <!-- Popular Category  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg flex flex-col justify-center items-center text-center hover:border-pink-500/50 transition-all group">
+        <div class="w-12 h-12 rounded-full bg-pink-500/10 text-pink-500 flex items-center justify-center text-xl mb-3 group-hover:bg-pink-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-star"></i>
+        </div>
+        <h4 class="text-lg font-bold text-white line-clamp-1">@ViewBag.PopCategory</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">En Popüler Kategori</span>
+    </div>
+
+    <!-- Popular Payment Method  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg flex flex-col justify-center items-center text-center hover:border-cyan-500/50 transition-all group">
+         <div class="w-12 h-12 rounded-full bg-cyan-500/10 text-cyan-500 flex items-center justify-center text-xl mb-3 group-hover:bg-cyan-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-wallet"></i>
+        </div>
+        <h4 class="text-lg font-bold text-white">@ViewBag.PopPaymentMethod</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">En Çok Tercih Edilen Ödeme Yöntemi</span>
+    </div>
+    <!-- Popular Product  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg flex flex-col justify-center items-center text-center hover:border-yellow-500/50 transition-all group">
+         <div class="w-12 h-12 rounded-full bg-yellow-500/10 text-yellow-500 flex items-center justify-center text-xl mb-3 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-box"></i>
+        </div>
+        <h4 class="text-lg font-bold text-white">@ViewBag.PopProduct</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">En Popüler Ürün</span>
+    </div>
+    <!-- Top Country -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg flex flex-col justify-center items-center text-center hover:border-blue-500/50 transition-all group">
+        <div class="w-12 h-12 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-xl mb-3 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-globe"></i>
+        </div>
+        <h4 class="text-lg font-bold text-white">@ViewBag.TopCountry</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">En Çok Sipariş Verilen Ülke</span>
+    </div>
+
+
+
+</div>
+
+<!-- Order Status Breakdown -->
+<h2 class="text-xl font-bold text-white mb-4 pl-1 flex items-center gap-2">
+    <i class="fa-solid fa-chart-pie text-gray-400"></i> Sipariş Durumları
+</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+    
+    <!-- Waiting  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-yellow-500/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-yellow-500/10 text-yellow-500 flex items-center justify-center text-xl mb-3 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.WaitingOrders</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Beklemede</span>
+    </div>
+
+    <!-- Preparing  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-orange-500/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-orange-500/10 text-orange-500 flex items-center justify-center text-xl mb-3 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-box-open"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.PrepareOrders</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Hazırlanıyor</span>
+    </div>
+
+    <!-- Cargo ) -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-blue-500/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center text-xl mb-3 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+             <i class="fa-solid fa-truck-fast"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.CargoOrders</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Kargoda</span>
+    </div>
+
+    <!-- Completed  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-emerald-500/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-xl mb-3 group-hover:bg-emerald-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-check-double"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.CompletedOrders</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Tamamlandı</span>
+    </div>
+
+    <!-- Canceled  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-red-500/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center text-xl mb-3 group-hover:bg-red-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-ban"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.CanceledOrders</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">İptal Edildi</span>
+    </div>
+
+</div>
+
+<!-- Payment Method Breakdown -->
+<h2 class="text-xl font-bold text-white mt-8 mb-4 pl-1 flex items-center gap-2">
+    <i class="fa-solid fa-wallet text-gray-400"></i> Ödeme Yöntemi Dağılımı
+</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+    
+    <!-- Credit Card  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-indigo-500/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-500 flex items-center justify-center text-xl mb-3 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-credit-card"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.CreditCardCount</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Kredi Kartı</span>
+    </div>
+
+    <!-- Bank Card  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-rose-500/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-rose-500/10 text-rose-500 flex items-center justify-center text-xl mb-3 group-hover:bg-rose-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-money-check"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.BankCardCount</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Banka Kartı</span>
+    </div>
+
+    <!-- PayPal  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-blue-400/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-blue-400/10 text-blue-400 flex items-center justify-center text-xl mb-3 group-hover:bg-blue-400 group-hover:text-white transition-colors">
+             <i class="fa-brands fa-paypal"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.PayPalCount</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">PayPal</span>
+    </div>
+
+    <!-- Bank Transfer  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-gray-500/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-gray-500/10 text-gray-500 flex items-center justify-center text-xl mb-3 group-hover:bg-gray-500 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-money-bill-transfer"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.BankTransferCount</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Havale/EFT</span>
+    </div>
+
+    <!-- Google Pay (-->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-emerald-200/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-emerald-200/10 text-emerald-200 flex items-center justify-center text-xl mb-3 group-hover:bg-emerald-200 group-hover:text-black transition-colors">
+            <i class="fa-brands fa-google-pay"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.GooglePayCount</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Google Pay</span>
+    </div>
+
+    <!-- Apple Pay  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-gray-100/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-gray-100/10 text-gray-100 flex items-center justify-center text-xl mb-3 group-hover:bg-gray-100 group-hover:text-black transition-colors">
+            <i class="fa-brands fa-apple"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.ApplePayCount</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Apple Pay</span>
+    </div>
+
+    <!-- Door Pay  -->
+    <div class="bg-dark-800 rounded-xl p-6 border border-dark-700 hover:border-amber-600/50 transition-all flex flex-col items-center text-center group">
+        <div class="w-12 h-12 rounded-full bg-amber-600/10 text-amber-600 flex items-center justify-center text-xl mb-3 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+            <i class="fa-solid fa-hand-holding-dollar"></i>
+        </div>
+        <h4 class="text-2xl font-bold text-white">@ViewBag.DoorPayCount</h4>
+        <span class="text-xs font-semibold text-gray-500 uppercase mt-1">Kapıda Ödeme</span>
+    </div>
+
+</div>

@@ -1,0 +1,265 @@
+﻿@using DataVisualizationUI.Models.ForecastViewModels.OrderForecastViewModels
+@model List<CountryForecastViewModel>
+
+<!-- Main Card Wrapper (Ana Kart Wrapper) -->
+<div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl p-6">
+    <!-- Title (Başlık) -->
+    <div class="flex items-center justify-between mb-6 pb-4 border-b border-dark-700">
+        <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                <i class="fa-solid fa-earth-americas text-blue-400"></i> 
+                Bölgesel Sipariş Analizi
+            </h2>
+            <p class="text-gray-400 text-sm mt-1">Ülke bazlı geçmiş-tahmin karşılaştırması</p>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <!-- Summary Cards (Özet Kartlar) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            @{
+                var topGrowth = Model.OrderByDescending(x => x.GrowthPercentage).First();
+                var topVolume = Model.OrderByDescending(x => x.TotalHistorical).First();
+                var topForecast = Model.OrderByDescending(x => x.TotalForecast).First();
+            }
+
+            <div class="bg-emerald-500/10 rounded-lg p-4 border border-emerald-500/20">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-rocket text-emerald-400 text-xl"></i>
+                    <span class="text-xs text-emerald-400 font-semibold uppercase">En Hızlı Büyüyen</span>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-1">@topGrowth.CountryName</h3>
+                <p class="text-emerald-400 font-bold text-lg">+@topGrowth.GrowthPercentage.ToString("F1")%</p>
+            </div>
+
+            <div class="bg-blue-500/10 rounded-lg p-4 border border-blue-500/20">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-crown text-blue-400 text-xl"></i>
+                    <span class="text-xs text-blue-400 font-semibold uppercase">En Yüksek Hacim</span>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-1">@topVolume.CountryName</h3>
+                <p class="text-blue-400 font-bold text-lg">@topVolume.TotalHistorical sipariş</p>
+            </div>
+
+            <div class="bg-purple-500/10 rounded-lg p-4 border border-purple-500/20">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fa-solid fa-chart-line text-purple-400 text-xl"></i>
+                    <span class="text-xs text-purple-400 font-semibold uppercase">En Yüksek Tahmin</span>
+                </div>
+                <h3 class="text-2xl font-bold text-white mb-1">@topForecast.CountryName</h3>
+                <p class="text-purple-400 font-bold text-lg">@topForecast.TotalForecast bekleniyor</p>
+            </div>
+        </div>
+
+        <!-- Main Chart (Ana Grafik) -->
+        <div class="bg-dark-900 rounded-xl border border-dark-600 p-6">
+            <div class="h-96">
+                <canvas id="countryComparisonChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Legend (Lejant) -->
+        <div class="flex items-center justify-center gap-6 mt-4 text-sm">
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-blue-500"></div>
+                <span class="text-gray-400">Geçmiş Veriler</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-emerald-500"></div>
+                <span class="text-gray-400">Pozitif Tahmin (Büyüme)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-red-500"></div>
+                <span class="text-gray-400">Negatif Tahmin (Düşüş)</span>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const countryData = @Html.Raw(Json.Serialize(Model));
+                
+                // Get top 10 countries with the highest volume (En yüksek hacimli 10 ülkeyi al)
+                const topCountries = countryData
+                    .sort((a, b) => b.totalHistorical - a.totalHistorical)
+                    .slice(0, 10);
+
+                const labels = topCountries.map(c => c.countryName);
+                const historicalData = topCountries.map(c => c.totalHistorical);
+                const forecastData = topCountries.map(c => c.totalForecast);
+                const growthData = topCountries.map(c => c.growthPercentage);
+
+                // Forecast color: Growth -> green, Decline -> red (Tahmin rengi: Büyüme -> yeşil, Düşüş -> kırmızı)
+                const forecastColors = growthData.map(g => 
+                    g >= 0 ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)'
+                );
+
+                new Chart(document.getElementById('countryComparisonChart'), {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Geçmiş Toplam',
+                                data: historicalData,
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 5,
+                                pointBackgroundColor: '#3b82f6',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2
+                            },
+                            {
+                                label: 'Tahmini Toplam',
+                                data: forecastData,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 3,
+                                borderDash: [5, 5],
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 5,
+                                pointBackgroundColor: forecastColors,
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    color: '#9ca3af',
+                                    padding: 20,
+                                    font: { size: 13 },
+                                    usePointStyle: true
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                                titleColor: '#fff',
+                                bodyColor: '#e5e7eb',
+                                borderColor: '#374151',
+                                borderWidth: 1,
+                                padding: 15,
+                                callbacks: {
+                                    afterLabel: function(context) {
+                                        const index = context.dataIndex;
+                                        const growth = growthData[index];
+                                        return `Büyüme: ${growth >= 0 ? '+' : ''}${growth.toFixed(1)}%`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { 
+                                    color: '#374151',
+                                    drawBorder: false
+                                },
+                                ticks: { 
+                                    color: '#9ca3af',
+                                    font: { size: 11 }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Sipariş Sayısı',
+                                    color: '#9ca3af',
+                                    font: { size: 12 }
+                                }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { 
+                                    color: '#fff',
+                                    font: { 
+                                        size: 11,
+                                        weight: '500'
+                                    },
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Detail Table (Optional - can be shown at the bottom) (Detay Tablo (Opsiyonel - altta gösterebiliriz))
+                const tableHtml = topCountries.map((c, idx) => {
+                    const growthColor = c.growthPercentage >= 0 ? 'text-emerald-400' : 'text-red-400';
+                    const growthIcon = c.growthPercentage >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+                    const rankBadge = idx < 3 ? 
+                        `<span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                            idx === 0 ? 'bg-yellow-500 text-black' : 
+                            idx === 1 ? 'bg-gray-400 text-black' : 
+                            'bg-amber-600 text-white'
+                        }">${idx + 1}</span>` :
+                        `<span class="w-6 h-6 rounded-full flex items-center justify-center text-xs bg-dark-700 text-gray-400">${idx + 1}</span>`;
+
+                    return `
+                        <tr class="border-b border-dark-700 hover:bg-dark-700/50 transition-colors">
+                            <td class="p-3">${rankBadge}</td>
+                            <td class="p-3 font-semibold text-white">${c.countryName}</td>
+                            <td class="p-3 text-right text-blue-400">${c.totalHistorical}</td>
+                            <td class="p-3 text-right font-bold ${c.growthPercentage >= 0 ? 'text-emerald-400' : 'text-red-400'}">
+                                ${c.totalForecast}
+                            </td>
+                            <td class="p-3 text-right">
+                                <span class="font-bold ${growthColor}">
+                                    <i class="fa-solid ${growthIcon} text-xs"></i>
+                                    ${c.growthPercentage.toFixed(1)}%
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                document.getElementById('countryTable').innerHTML = tableHtml;
+            });
+        </script>
+
+        <!-- Detail Table (Detay Tablo) -->
+        <div class="mt-6 bg-dark-900 rounded-xl border border-dark-600 overflow-hidden">
+            <div class="p-4 border-b border-dark-700">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-table text-blue-400"></i>
+                    Detaylı İstatistikler
+                </h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-dark-800">
+                        <tr class="text-gray-400 text-xs uppercase">
+                            <th class="p-3 text-left w-16">Sıra</th>
+                            <th class="p-3 text-left">Ülke</th>
+                            <th class="p-3 text-right">Geçmiş</th>
+                            <th class="p-3 text-right">Tahmin</th>
+                            <th class="p-3 text-right">Değişim</th>
+                        </tr>
+                    </thead>
+                    <tbody id="countryTable">
+                        <!-- To be filled with JavaScript (JavaScript ile doldurulacak) -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="bg-dark-900/50 rounded-xl border border-dark-700 p-12 text-center">
+            <i class="fa-solid fa-earth-americas text-5xl text-gray-600 mb-4"></i>
+            <h3 class="text-lg font-semibold text-white mb-2">Veri Yetersiz</h3>
+            <p class="text-gray-500 text-sm max-w-md mx-auto">
+                Ülke bazlı tahmin için en az 3 aylık geçmiş sipariş verisi gerekiyor.
+            </p>
+        </div>
+    }
+</div>

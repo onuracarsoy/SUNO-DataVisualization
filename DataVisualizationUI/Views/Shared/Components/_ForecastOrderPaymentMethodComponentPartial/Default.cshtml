@@ -1,0 +1,162 @@
+﻿@using DataVisualizationUI.Models.ForecastViewModels.OrderForecastViewModels
+@model List<PaymentMethodForecastViewModel>
+
+<!-- Main Card Wrapper (Ana Kart Wrapper) -->
+<div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl p-6">
+    <!-- Header Section (Başlık Bölümü) -->
+    <div class="flex items-center justify-between mb-6 pb-4 border-b border-dark-700">
+        <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-3">
+                <i class="fa-solid fa-credit-card text-purple-400"></i> 
+                Ödeme Yöntemi Analizi
+            </h2>
+            <p class="text-gray-400 text-sm mt-1">Son 12 aylık verilerle önümüzdeki yılın tahminleri</p>
+        </div>
+        
+    </div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @foreach (var item in Model)
+        {
+            var chartId = "forecast_" + Guid.NewGuid().ToString("N");
+            
+            // All months (Past + Forecast) (Tüm aylar (Geçmiş + Tahmin))
+            var allLabels = item.HistoricalData.Select(x => x.Period)
+                .Concat(item.ForecastData.Select(x => x.Period))
+                .ToList();
+            
+            // Past data (followed by null) (Geçmiş veri (sonrası null))
+            var historyValues = item.HistoricalData.Select(x => (object)x.Value)
+                .Concat(Enumerable.Repeat((object)null, item.ForecastData.Count))
+                .ToList();
+            
+            // Forecast data (starts with null, include the last past data for transition) (Tahmin verisi (başı null, transition için son geçmiş veriyi ekle))
+            var forecastValues = Enumerable.Repeat((object)null, item.HistoricalData.Count - 1).ToList();
+            if (item.HistoricalData.Any())
+            {
+                forecastValues.Add(item.HistoricalData.Last().Value);
+            }
+            forecastValues.AddRange(item.ForecastData.Select(x => (object)x.Value));
+
+            <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl p-6">
+                <!-- Title (Başlık) -->
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">@item.PaymentMethod</h3>
+                        <span class="text-xs text-gray-500">12 Aylık Projeksiyon</span>
+                    </div>
+                    <div class="text-right">
+                        @{
+                            var growthColor = item.GrowthPercentage >= 0 ? "text-emerald-400" : "text-red-400";
+                            var growthIcon = item.GrowthPercentage >= 0 ? "fa-arrow-trend-up" : "fa-arrow-trend-down";
+                        }
+                        <span class="text-2xl font-bold @growthColor">
+                            <i class="fa-solid @growthIcon text-sm"></i>
+                            @item.GrowthPercentage.ToString("F1")%
+                        </span>
+                        <p class="text-xs text-gray-500 mt-1">Beklenen Değişim</p>
+                    </div>
+                </div>
+
+                <!-- Grafik (Grafik) -->
+                <div class="h-64">
+                    <canvas id="@chartId"></canvas>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    new Chart(document.getElementById('@chartId'), {
+                        type: 'line',
+                        data: {
+                            labels: @Html.Raw(Json.Serialize(allLabels)),
+                            datasets: [
+                                {
+                                    label: 'Geçmiş Veriler',
+                                    data: @Html.Raw(Json.Serialize(historyValues)),
+                                    borderColor: '#6366f1',
+                                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                    borderWidth: 2,
+                                    tension: 0.4,
+                                    fill: true,
+                                    pointRadius: 3,
+                                    pointHoverRadius: 5
+                                },
+                                {
+                                    label: 'AI Tahmini',
+                                    data: @Html.Raw(Json.Serialize(forecastValues)),
+                                    borderColor: '#10b981',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                    borderWidth: 3,
+                                    borderDash: [5, 5],
+                                    tension: 0.4,
+                                    fill: true,
+                                    spanGaps: true,
+                                    pointRadius: 4,
+                                    pointHoverRadius: 6,
+                                    pointBackgroundColor: '#10b981'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'bottom',
+                                    labels: { 
+                                        color: '#9ca3af', 
+                                        padding: 15,
+                                        font: { size: 11 }
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: 'rgba(17, 24, 39, 0.95)',
+                                    titleColor: '#fff',
+                                    bodyColor: '#e5e7eb',
+                                    borderColor: '#374151',
+                                    borderWidth: 1,
+                                    padding: 12,
+                                    displayColors: true
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: '#374151' },
+                                    ticks: { 
+                                        color: '#9ca3af',
+                                        font: { size: 10 }
+                                    }
+                                },
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { 
+                                        color: '#9ca3af',
+                                        maxRotation: 45,
+                                        minRotation: 45,
+                                        font: { size: 9 }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
+        }
+    </div>
+}
+else
+{
+    <div class="bg-dark-900/50 rounded-xl border border-dark-700 p-12 text-center">
+        <i class="fa-solid fa-chart-line text-5xl text-gray-600 mb-4"></i>
+        <h3 class="text-lg font-semibold text-white mb-2">Veri Yetersiz</h3>
+        <p class="text-gray-500 text-sm max-w-md mx-auto">
+            AI tahmin modelini eğitmek için en az 3 aylık geçmiş sipariş verisi gerekiyor.
+        </p>
+    </div>
+}
+</div> <!-- Main Card Closing (Ana Kart Kapanış) -->

@@ -1,0 +1,15 @@
+﻿<script>
+    $(document).ready(function () {
+        $('#sidebar-toggle').click(function () {
+            var sidebar = $('#sidebar');
+
+            // Mobile: Toggle slide (Mobil: Kaydırarak aç/kapat)
+            sidebar.toggleClass('-translate-x-full');
+
+            // Desktop: Toggle width collapse (Masaüstü: Genişliği daralt/aç)
+            // We check if we are on desktop by checking window width or purely by classes (Masaüstünde olup olmadığımızı pencere genişliğini kontrol ederek veya sadece sınıflara bakarak kontrol ederiz)
+            // Since md: classes apply on desktop, toggling a class that overrides md:w-64 works (md: sınıfları masaüstünde uygulandığından, md:w-64'ü geçersiz kılan bir sınıfı açıp kapatmak işe yarar)
+            sidebar.toggleClass('md:w-0 md:overflow-hidden');
+        });
+    });
+</script>

@@ -1,0 +1,149 @@
+﻿@model DataVisualizationUI.Dtos.CreateCustomerDto
+
+@{
+    ViewData["Title"] = "Yeni Müşteri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Page Info  -->
+<div class="mb-8 pl-1">
+    <h1 class="text-3xl font-bold text-white">Yeni Müşteri</h1>
+    <p class="text-gray-400 mt-1 text-sm">Sisteme yeni bir müşteri kaydı oluşturun.</p>
+</div>
+
+<!-- Form Card -->
+<div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl p-8 max-w-4xl mx-auto">
+    
+    <form asp-controller="Customer" asp-action="CreateCustomer" method="post">
+        
+        <!-- Validation Summary -->
+        <div asp-validation-summary="ModelOnly" class="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm"></div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Customer Name -->
+            <div>
+                <label asp-for="CustomerName" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input type="text" asp-for="CustomerName" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Örn: Ahmet" />
+                </div>
+                <span asp-validation-for="CustomerName" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+
+            <!-- Customer Surname -->
+            <div>
+                <label asp-for="CustomerSurname" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                        <i class="fa-solid fa-user"></i>
+                    </span>
+                    <input type="text" asp-for="CustomerSurname" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Örn: Yılmaz" />
+                </div>
+                <span asp-validation-for="CustomerSurname" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+
+            <!-- Email -->
+            <div>
+                <label asp-for="CustomerEmail" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                        <i class="fa-solid fa-envelope"></i>
+                    </span>
+                    <input type="email" asp-for="CustomerEmail" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="ahmet@ornek.com" />
+                </div>
+                <span asp-validation-for="CustomerEmail" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+
+            <!-- Phone -->
+            <div>
+                <label asp-for="CustomerPhone" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                        <i class="fa-solid fa-phone"></i>
+                    </span>
+                    <input type="tel" asp-for="CustomerPhone" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="05XX XXX XX XX" />
+                </div>
+                <span asp-validation-for="CustomerPhone" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+
+             <!-- Country -->
+            <div>
+                <label asp-for="CustomerCountry" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                        <i class="fa-solid fa-globe"></i>
+                    </span>
+                    <input type="text" asp-for="CustomerCountry" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Örn: Türkiye" />
+                </div>
+                <span asp-validation-for="CustomerCountry" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+
+            <!-- City -->
+            <div>
+                <label asp-for="CustomerCity" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                        <i class="fa-solid fa-city"></i>
+                    </span>
+                    <input type="text" asp-for="CustomerCity" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Örn: İstanbul" />
+                </div>
+                <span asp-validation-for="CustomerCity" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+            
+            <!-- District -->
+            <div>
+                <label asp-for="CustomerDistrict" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                        <i class="fa-solid fa-map-pin"></i>
+                    </span>
+                    <input type="text" asp-for="CustomerDistrict" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Örn: Kadıköy" />
+                </div>
+                <span asp-validation-for="CustomerDistrict" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+            
+             <!-- Customer Image URL -->
+            <div>
+                <label asp-for="CustomerImageUrl" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                        <i class="fa-solid fa-image"></i>
+                    </span>
+                    <input type="text" asp-for="CustomerImageUrl" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="https://..." />
+                </div>
+                <span asp-validation-for="CustomerImageUrl" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+
+            <!-- Address -->
+             <div class="md:col-span-2">
+                <label asp-for="CustomerAddress" class="block text-sm font-medium text-gray-400 mb-2"></label>
+                <div class="relative">
+                    <span class="absolute top-3 left-0 pl-3 flex items-start text-gray-500">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </span>
+                    <textarea asp-for="CustomerAddress" rows="3" class="w-full bg-dark-900 border border-dark-700 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Tam adres bilgisi..."></textarea>
+                </div>
+                <span asp-validation-for="CustomerAddress" class="text-red-400 text-xs mt-1 block"></span>
+            </div>
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-4 mt-8 border-t border-dark-700 pt-6">
+            <button type="submit" class="bg-primary hover:bg-indigo-600 text-white font-medium py-2.5 px-6 rounded-lg shadow-lg shadow-indigo-500/30 transform active:scale-95 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-check"></i> Kaydet
+            </button>
+            <a href="/Customer/CustomerList" class="text-gray-400 hover:text-white hover:bg-dark-700 font-medium py-2.5 px-6 rounded-lg transition-colors">
+                İptal
+            </a>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

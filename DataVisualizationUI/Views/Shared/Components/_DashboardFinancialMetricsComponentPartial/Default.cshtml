@@ -1,0 +1,83 @@
+﻿@using DataVisualizationUI.Models.DashboardViewModels
+@model FinancialMetricsViewModel
+
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    
+    <!-- Total Revenue: Indigo Gradient -->
+    <div class="relative overflow-hidden rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-300 shadow-xl shadow-indigo-500/10">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-600 to-violet-700 opacity-90"></div>
+        <div class="absolute -right-10 -top-10 text-white/10 group-hover:text-white/20 transition-all duration-500 transform rotate-12">
+            <i class="fa-solid fa-coins text-9xl"></i>
+        </div>
+        
+        <div class="relative z-10 text-white">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                    <i class="fa-solid fa-sack-dollar text-xl"></i>
+                </div>
+          
+            </div>
+            <p class="text-indigo-100 text-sm font-medium opacity-80 mb-1">Toplam Ciro</p>
+            <h3 class="text-3xl font-bold tracking-tight" id="total-revenue">@Model.TotalRevenue.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("fr-FR"))</h3>
+        </div>
+    </div>
+
+    <!-- Estimated Profit: Emerald Gradient -->
+    <div class="relative overflow-hidden rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-300 shadow-xl shadow-emerald-500/10">
+        <div class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600 opacity-90"></div>
+        <div class="absolute -right-10 -top-10 text-white/10 group-hover:text-white/20 transition-all duration-500 transform rotate-12">
+            <i class="fa-solid fa-chart-pie text-9xl"></i>
+        </div>
+
+        <div class="relative z-10 text-white">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                    <i class="fa-solid fa-wallet text-xl"></i>
+                </div>
+            
+            </div>
+            <p class="text-emerald-100 text-sm font-medium opacity-80 mb-1">Tahmini Kar (%35)</p>
+            <h3 class="text-3xl font-bold tracking-tight" id="total-profit">@Model.TotalProfit.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("fr-FR"))</h3>
+        </div>
+    </div>
+
+    <!-- Total Orders: Sky Blue Gradient -->
+    <div class="relative overflow-hidden rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-300 shadow-xl shadow-sky-500/10">
+        <div class="absolute inset-0 bg-gradient-to-br from-sky-500 to-blue-600 opacity-90"></div>
+        <div class="absolute -right-10 -top-10 text-white/10 group-hover:text-white/20 transition-all duration-500 transform rotate-12">
+            <i class="fa-solid fa-cart-flatbed text-9xl"></i>
+        </div>
+
+        <div class="relative z-10 text-white">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                    <i class="fa-solid fa-boxes-packing text-xl"></i>
+                </div>
+             
+            </div>
+            <p class="text-sky-100 text-sm font-medium opacity-80 mb-1">Toplam Sipariş</p>
+            <h3 class="text-3xl font-bold tracking-tight" id="total-orders">@Model.TotalOrders</h3>
+        </div>
+    </div>
+
+    <!-- Avg Basket: Amber Gradient -->
+    <div class="relative overflow-hidden rounded-2xl p-6 group hover:scale-[1.02] transition-all duration-300 shadow-xl shadow-amber-500/10">
+        <div class="absolute inset-0 bg-gradient-to-br from-amber-500 to-orange-600 opacity-90"></div>
+        <div class="absolute -right-10 -top-10 text-white/10 group-hover:text-white/20 transition-all duration-500 transform rotate-12">
+            <i class="fa-solid fa-basket-shopping text-9xl"></i>
+        </div>
+
+        <div class="relative z-10 text-white">
+             <div class="flex justify-between items-start mb-4">
+                <div class="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
+                    <i class="fa-solid fa-receipt text-xl"></i>
+                </div>
+        
+            </div>
+            <p class="text-amber-100 text-sm font-medium opacity-80 mb-1">Ortalama Sepet</p>
+            <h3 class="text-3xl font-bold tracking-tight" id="avg-basket">@Model.AverageBasketAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("fr-FR"))</h3>
+        </div>
+    </div>
+
+</div>

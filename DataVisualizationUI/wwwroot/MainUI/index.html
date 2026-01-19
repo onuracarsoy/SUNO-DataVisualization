@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0f172a', // Main background (Slate 900)
+                            800: '#1e293b', // Cards/Sidebar (Slate 800)
+                            700: '#334155', // Borders (Slate 700)
+                        },
+                        primary: '#6366f1', // Indigo 500
+                        secondary: '#10b981', // Emerald 500
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+
+<body class="bg-dark-900 text-gray-300 font-sans antialiased overflow-hidden">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-dark-800 border-r border-dark-700 hidden md:flex flex-col transition-all duration-300">
+            <div class="p-6 flex items-center justify-center border-b border-dark-700">
+                <i class="fa-solid fa-chart-line text-3xl text-primary mr-2"></i>
+                <span class="text-2xl font-bold tracking-wider text-white">DashUI</span>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-4">
+                <ul class="space-y-2 px-4">
+                    <li>
+                        <a href="#"
+                            class="flex items-center p-3 rounded-xl bg-primary/10 text-primary border border-primary/20 transition-all hover:bg-primary/20">
+                            <i class="fa-solid fa-house w-6 text-center"></i>
+                            <span class="ml-3 font-medium">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                            <i class="fa-solid fa-users w-6 text-center"></i>
+                            <span class="ml-3 font-medium">Users</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                            <i class="fa-solid fa-chart-pie w-6 text-center"></i>
+                            <span class="ml-3 font-medium">Analytics</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                            <i class="fa-solid fa-map w-6 text-center"></i>
+                            <span class="ml-3 font-medium">Maps</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#"
+                            class="flex items-center p-3 rounded-xl text-gray-400 hover:bg-dark-700 hover:text-white transition-all">
+                            <i class="fa-solid fa-gear w-6 text-center"></i>
+                            <span class="ml-3 font-medium">Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="p-4 border-t border-dark-700">
+                <div class="flex items-center gap-3">
+                    <img class="h-10 w-10 rounded-full object-cover border-2 border-primary"
+                        src="https://ui-avatars.com/api/?name=Admin+User&background=random&color=fff"
+                        alt="Admin Profile">
+                    <div>
+                        <p class="text-sm font-medium text-white">Admin User</p>
+                        <p class="text-xs text-gray-500">View Profile</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+
+            <!-- Header -->
+            <header
+                class="bg-dark-800/80 backdrop-blur-md border-b border-dark-700 z-10 flex items-center justify-between p-4 px-6 fixed w-full md:static md:w-auto">
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-gray-400 focus:outline-none hover:text-white">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+
+                <!-- Search -->
+                <div class="relative hidden sm:block w-full max-w-md mx-4">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                        <i class="fa-solid fa-search text-dark-700"></i>
+                    </span>
+                    <input
+                        class="w-full pl-10 pr-4 py-2 bg-dark-900 border border-dark-700 rounded-lg text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all placeholder-dark-700"
+                        type="text" placeholder="Search...">
+                </div>
+
+                <!-- Right Header Icons -->
+                <div class="flex items-center gap-4">
+                    <button class="relative p-2 text-gray-400 hover:text-white transition-colors">
+                        <i class="fa-solid fa-bell text-xl"></i>
+                        <span class="absolute top-1 right-2 h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
+                    </button>
+                    <button class="p-2 text-gray-400 hover:text-white transition-colors">
+                        <i class="fa-solid fa-envelope text-xl"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-dark-900 p-6">
+
+                <div class="mb-8 flex justify-between items-center pt-16 md:pt-0">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">Dashboard Overview</h1>
+                        <p class="text-gray-500 mt-1">Welcome back, get your summary here.</p>
+                    </div>
+                    <button
+                        class="bg-primary hover:bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">Generate Report</span>
+                    </button>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Card 1 -->
+                    <div
+                        class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg hover:border-primary/50 transition-all duration-300 group">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Total Views</p>
+                                <h3 class="text-2xl font-bold text-white mt-1">24,560</h3>
+                            </div>
+                            <div
+                                class="p-2 rounded-lg bg-indigo-500/10 text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-eye text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs">
+                            <span
+                                class="text-secondary flex items-center font-bold bg-secondary/10 px-2 py-0.5 rounded mr-2">
+                                <i class="fa-solid fa-arrow-up mr-1"></i> 5.4%
+                            </span>
+                            <span class="text-gray-500">vs last month</span>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div
+                        class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg hover:border-secondary/50 transition-all duration-300 group">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider">New Orders</p>
+                                <h3 class="text-2xl font-bold text-white mt-1">3,450</h3>
+                            </div>
+                            <div
+                                class="p-2 rounded-lg bg-emerald-500/10 text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-cart-shopping text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs">
+                            <span
+                                class="text-secondary flex items-center font-bold bg-secondary/10 px-2 py-0.5 rounded mr-2">
+                                <i class="fa-solid fa-arrow-up mr-1"></i> 12%
+                            </span>
+                            <span class="text-gray-500">vs last month</span>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div
+                        class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg hover:border-yellow-500/50 transition-all duration-300 group">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider">New Users</p>
+                                <h3 class="text-2xl font-bold text-white mt-1">452</h3>
+                            </div>
+                            <div
+                                class="p-2 rounded-lg bg-yellow-500/10 text-yellow-500 group-hover:bg-yellow-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-user-plus text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs">
+                            <span
+                                class="text-red-500 flex items-center font-bold bg-red-500/10 px-2 py-0.5 rounded mr-2">
+                                <i class="fa-solid fa-arrow-down mr-1"></i> 1.2%
+                            </span>
+                            <span class="text-gray-500">vs last month</span>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div
+                        class="bg-dark-800 rounded-xl p-6 border border-dark-700 shadow-lg hover:border-red-500/50 transition-all duration-300 group">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-gray-500 text-xs font-semibold uppercase tracking-wider">Revenue</p>
+                                <h3 class="text-2xl font-bold text-white mt-1">$12,450</h3>
+                            </div>
+                            <div
+                                class="p-2 rounded-lg bg-red-500/10 text-red-500 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                <i class="fa-solid fa-dollar-sign text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex items-center text-xs">
+                            <span
+                                class="text-secondary flex items-center font-bold bg-secondary/10 px-2 py-0.5 rounded mr-2">
+                                <i class="fa-solid fa-arrow-up mr-1"></i> 8.1%
+                            </span>
+                            <span class="text-gray-500">vs last month</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Line Chart -->
+                    <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="text-lg font-semibold text-white">Sales Overview</h4>
+                            <button class="text-gray-500 hover:text-white"><i
+                                    class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="relative h-72 w-full">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Doughnut Chart -->
+                    <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="text-lg font-semibold text-white">Traffic Sources</h4>
+                            <button class="text-gray-500 hover:text-white"><i
+                                    class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </div>
+                        <div class="relative h-72 w-full flex justify-center">
+                            <canvas id="trafficChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Section -->
+                <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl p-6 mb-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-lg font-semibold text-white">User Locations</h4>
+                        <span
+                            class="text-xs font-bold text-secondary bg-secondary/10 px-2 py-1 rounded border border-secondary/20">Live
+                            Data</span>
+                    </div>
+                    <div id="map"
+                        class="rounded-lg border border-dark-700 opacity-90 hover:opacity-100 transition-opacity"></div>
+                </div>
+
+                <!-- Table Section -->
+                <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl overflow-hidden mb-8">
+                    <div class="p-6 border-b border-dark-700 flex justify-between items-center">
+                        <h4 class="text-lg font-semibold text-white">Recent Transactions</h4>
+                        <a href="#" class="text-primary text-sm font-medium hover:text-indigo-400">View All</a>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-dark-900 text-gray-400 uppercase text-xs">
+                                    <th class="py-4 px-6 font-semibold border-b border-dark-700">User</th>
+                                    <th class="py-4 px-6 font-semibold border-b border-dark-700">Date</th>
+                                    <th class="py-4 px-6 font-semibold border-b border-dark-700">Status</th>
+                                    <th class="py-4 px-6 font-semibold border-b border-dark-700 text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-dark-700">
+                                <tr class="hover:bg-dark-700/50 transition-colors group">
+                                    <td class="py-4 px-6 flex items-center gap-3">
+                                        <div
+                                            class="h-8 w-8 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">
+                                            JD</div>
+                                        <span
+                                            class="font-medium text-gray-200 group-hover:text-white transition-colors">John
+                                            Doe</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-gray-500 text-sm">Oct 24, 2023</td>
+                                    <td class="py-4 px-6">
+                                        <span
+                                            class="px-3 py-1 rounded-full text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20">Completed</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-right font-medium text-gray-200">$120.00</td>
+                                </tr>
+                                <tr class="hover:bg-dark-700/50 transition-colors group">
+                                    <td class="py-4 px-6 flex items-center gap-3">
+                                        <div
+                                            class="h-8 w-8 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center text-xs font-bold">
+                                            JS</div>
+                                        <span
+                                            class="font-medium text-gray-200 group-hover:text-white transition-colors">Jane
+                                            Smith</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-gray-500 text-sm">Oct 23, 2023</td>
+                                    <td class="py-4 px-6">
+                                        <span
+                                            class="px-3 py-1 rounded-full text-xs font-medium bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">Pending</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-right font-medium text-gray-200">$85.50</td>
+                                </tr>
+                                <tr class="hover:bg-dark-700/50 transition-colors group">
+                                    <td class="py-4 px-6 flex items-center gap-3">
+                                        <div
+                                            class="h-8 w-8 rounded-full bg-red-500/20 text-red-500 flex items-center justify-center text-xs font-bold">
+                                            MJ</div>
+                                        <span
+                                            class="font-medium text-gray-200 group-hover:text-white transition-colors">Michael
+                                            Johnson</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-gray-500 text-sm">Oct 22, 2023</td>
+                                    <td class="py-4 px-6">
+                                        <span
+                                            class="px-3 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20">Failed</span>
+                                    </td>
+                                    <td class="py-4 px-6 text-right font-medium text-gray-200">$340.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <footer class="text-center text-dark-700 text-sm mt-8 border-t border-dark-700 pt-6">
+                    &copy; 2023 DashUI Admin. All rights reserved.
+                </footer>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // --- Chart.js Initialization ---
+
+            // Global Defaults for Dark Mode
+            Chart.defaults.color = '#94a3b8'; // Slate-400 for text
+            Chart.defaults.borderColor = '#334155'; // Slate-700 for grid lines
+
+            // Sales Chart (Line Chart)
+            const salesCtx = document.getElementById('salesChart').getContext('2d');
+
+            // Gradient Fill
+            const salesGradient = salesCtx.createLinearGradient(0, 0, 0, 400);
+            salesGradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)'); // Indigo 500
+            salesGradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+
+            const salesChart = new Chart(salesCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Sales ($)',
+                        data: [12000, 19000, 3000, 5000, 2000, 3000, 7000, 11000, 15000, 20000, 25000, 30000],
+                        backgroundColor: salesGradient,
+                        borderColor: '#6366f1', // Indigo 500
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#1e293b', // Slate 800 (Card bg)
+                        pointBorderColor: '#6366f1',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleColor: '#fff',
+                            bodyColor: '#cbd5e1', // Slate 300
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            padding: 10,
+                            displayColors: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#334155', // Slate 700
+                                borderDash: [5, 5]
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    return '$' + value / 1000 + 'k';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index',
+                    },
+                }
+            });
+
+            // Traffic Sources Chart (Doughnut Chart)
+            const trafficCtx = document.getElementById('trafficChart').getContext('2d');
+            const trafficChart = new Chart(trafficCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Search Engine', 'Direct', 'Social Media', 'Referral'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            '#6366f1', // Indigo 500
+                            '#10b981', // Emerald 500
+                            '#eab308', // Yellow 500
+                            '#ef4444'  // Red 500
+                        ],
+                        borderColor: '#1e293b', // Match card background
+                        borderWidth: 4,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                color: '#cbd5e1' // Slate 300
+                            }
+                        }
+                    },
+                    cutout: '75%'
+                }
+            });
+
+
+            // --- Leaflet Map Initialization ---
+            // Istanbul coordinates: 41.0082, 28.9784
+            const map = L.map('map').setView([41.0082, 28.9784], 10);
+
+            // Dark Mode Tiles (CartoDB Dark Matter)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+
+            // Add some random markers to simulate user locations
+            const locations = [
+                { lat: 41.0082, lng: 28.9784, title: "Istanbul - HQ" },
+                { lat: 40.9904, lng: 29.0207, title: "Kadikoy Branch" },
+                { lat: 41.0422, lng: 29.0067, title: "Besiktas Hub" },
+                { lat: 41.0116, lng: 28.9329, title: "Fatih Store" }
+            ];
+
+            locations.forEach(loc => {
+                L.marker([loc.lat, loc.lng]).addTo(map)
+                    .bindPopup(`<div style="color: #333;"><b>${loc.title}</b><br>Active Users: ${Math.floor(Math.random() * 100)}</div>`);
+            });
+
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,273 @@
+﻿@using System.Globalization
+@model DataVisualizationUI.Dtos.OrderDto
+
+@{
+    ViewData["Title"] = "Sipariş Detayı";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Header & Actions -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+    <div class="pl-1">
+        <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+             <span class="text-gray-500">#@Model.OrderId</span> Sipariş Detayı
+        </h1>
+        <p class="text-gray-400 mt-1 text-sm">Siparişin tüm detaylarını buradan görüntüleyebilirsiniz.</p>
+    </div>
+    <div class="flex gap-3">
+         <a href="/Order/UpdateOrder/@Model.OrderId" class="bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-lg shadow-lg shadow-blue-500/30 transition-all flex items-center gap-2">
+            <i class="fa-solid fa-pen-to-square"></i> <span class="hidden sm:inline">Düzenle</span>
+        </a>
+        <a href="/Order/OrderList" class="bg-dark-700 hover:bg-dark-600 text-gray-300 hover:text-white font-medium py-2 px-4 rounded-lg transition-all flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Listeye Dön</span>
+        </a>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left Column: Order & Product Info -->
+    <div class="lg:col-span-2 space-y-6">
+        
+        <!-- Order Status Card -->
+        <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl overflow-hidden">
+            <div class="p-6 border-b border-dark-700 flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-list text-primary"></i> Sipariş Durumu
+                </h2>
+                <div>
+                     @if(Model.OrderStatus == "Tamamlandı")
+                    {
+                         <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            Tamamlandı
+                        </span>
+                    }
+                    else if(Model.OrderStatus == "İptal Edildi")
+                    {
+                        <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-red-500/10 text-red-400 border border-red-500/20">
+                            İptal Edildi
+                        </span>
+                    }
+                    else
+                    {
+                         <span class="px-3 py-1.5 rounded-lg text-sm font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                            @Model.OrderStatus
+                        </span>
+                    }
+                </div>
+            </div>
+            <div class="p-6 grid grid-cols-2 sm:grid-cols-4 gap-6">
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Sipariş No</label>
+                    <span class="text-white font-mono font-medium">#@Model.OrderId</span>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Sipariş Tarihi</label>
+                    <span class="text-white font-medium">@Model.OrderDate.ToString("d MMMM yyyy", CultureInfo.GetCultureInfo("tr-TR"))</span>
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Saat</label>
+                    <span class="text-white font-medium">@Model.OrderDate.ToString("HH:mm")</span>
+                </div>
+                 <div>
+                    <label class="block text-xs text-gray-500 mb-1 uppercase tracking-wide">Ödeme Yöntemi</label>
+                    <span class="text-white font-medium">@Model.PaymentMethod</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details Card -->
+        <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl overflow-hidden">
+             <div class="p-6 border-b border-dark-700">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-box-open text-primary"></i> Ürün Bilgileri
+                </h2>
+            </div>
+            <div class="p-6">
+                @if (!string.IsNullOrEmpty(Model.ProductName))
+                {
+                    <div class="flex flex-col sm:flex-row gap-6">
+                        <!-- Product Image -->
+                       <div class="w-full sm:w-32 h-32 bg-dark-900 rounded-lg flex-shrink-0 border border-dark-600 overflow-hidden flex items-center justify-center">
+                            @if(ViewBag.ProductImageUrl != null && !string.IsNullOrEmpty(ViewBag.ProductImageUrl as string))
+                            {
+                                 <img src="@ViewBag.ProductImageUrl" alt="@Model.ProductName" class="w-full h-full object-cover">
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-image text-3xl text-gray-600"></i>
+                            }
+                        </div>
+
+                        <!-- Product Info -->
+                        <div class="flex-grow">
+                             <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-xl font-bold text-white mb-1">@Model.ProductName</h3>
+                                    @if(ViewBag.ProductDescription != null)
+                                    {
+                                        <p class="text-gray-400 text-sm mb-3 line-clamp-2">@ViewBag.ProductDescription</p>
+                                    }
+                                    @if(ViewBag.CategoryName != null)
+                                    {
+                                         <span class="px-2 py-1 rounded text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                            @ViewBag.CategoryName
+                                        </span>
+                                    }
+                                </div>
+                                <div class="text-right">
+                                    <span class="block text-sm text-gray-400 mb-1">Birim Fiyat</span>
+                                    @if (ViewBag.ProductPrice != null)
+                                    {
+                                        <span class="text-lg font-bold text-white"> @((ViewBag.ProductPrice as decimal?)?.ToString("C", CultureInfo.GetCultureInfo("fr-FR")))</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Quantity & Total Logic -->
+                            <div class="mt-6 pt-6 border-t border-dark-700 flex justify-between items-center bg-dark-900/30 p-4 rounded-lg">
+                                <div class="flex items-center gap-2 text-gray-400">
+                                    <span>Adet:</span>
+                                    <span class="text-white font-bold text-lg">@Model.Quantity</span>
+                                </div>
+                                 <div class="flex items-center gap-2">
+                                    <span class="text-gray-400 text-sm">Toplam Tutar:</span>
+                                    <span class="text-emerald-400 font-bold text-2xl">
+                                        @Model.TotalPrice.ToString("C", CultureInfo.GetCultureInfo("fr-FR"))
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fa-solid fa-triangle-exclamation mb-2"></i> Ürün bilgisi bulunamadı.
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Right Column: Customer & Notes -->
+    <div class="space-y-6">
+
+        <!-- Customer Card -->
+        <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl overflow-hidden">
+             <div class="p-6 border-b border-dark-700">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-user text-primary"></i> Müşteri Bilgileri
+                </h2>
+            </div>
+            <div class="p-6">
+                @if (!string.IsNullOrEmpty(Model.CustomerName))
+                {
+                    <div class="flex items-center gap-4 mb-6">
+                        @if(ViewBag.CustomerImageUrl != null && !string.IsNullOrEmpty(ViewBag.CustomerImageUrl as string))
+                        {
+                            <img src="@ViewBag.CustomerImageUrl" class="w-16 h-16 rounded-full object-cover border-2 border-dark-600">
+                        }
+                        else
+                        {
+                            <div class="w-16 h-16 rounded-full bg-dark-700 flex items-center justify-center text-gray-400 border-2 border-dark-600">
+                                <i class="fa-solid fa-user text-2xl"></i>
+                            </div>
+                        }
+                        <div>
+                            <h3 class="text-white font-bold text-lg">@Model.CustomerName</h3>
+                            @if(ViewBag.CustomerCity != null || ViewBag.CustomerCountry != null)
+                            {
+                                <span class="text-gray-400 text-sm">@ViewBag.CustomerCity, @ViewBag.CustomerCountry</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                             <div class="w-8 h-8 rounded bg-dark-700 flex items-center justify-center text-gray-400 flex-shrink-0">
+                                <i class="fa-solid fa-envelope text-sm"></i>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-0.5">E-posta</label>
+                                @if(ViewBag.CustomerEmail != null)
+                                {
+                                    <a href="mailto:@ViewBag.CustomerEmail" class="text-blue-400 hover:text-blue-300 text-sm transition-colors">
+                                        @ViewBag.CustomerEmail
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500 text-sm">Belirtilmemiş</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                             <div class="w-8 h-8 rounded bg-dark-700 flex items-center justify-center text-gray-400 flex-shrink-0">
+                                <i class="fa-solid fa-phone text-sm"></i>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-0.5">Telefon</label>
+                                @if(ViewBag.CustomerPhone != null)
+                                {
+                                    <a href="tel:@ViewBag.CustomerPhone" class="text-gray-300 hover:text-white text-sm transition-colors">
+                                        @ViewBag.CustomerPhone
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500 text-sm">Belirtilmemiş</span>
+                                }
+                            </div>
+                        </div>
+                         <div class="flex items-start gap-3">
+                             <div class="w-8 h-8 rounded bg-dark-700 flex items-center justify-center text-gray-400 flex-shrink-0">
+                                <i class="fa-solid fa-map-location-dot text-sm"></i>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 mb-0.5">Adres</label>
+                                @if(ViewBag.CustomerAddress != null)
+                                {
+                                    <p class="text-gray-300 text-sm">@ViewBag.CustomerAddress</p>
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500 text-sm">Adres bilgisi girilmemiş.</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                     <div class="text-center text-gray-500 py-4">Müşteri bilgisi yok.</div>
+                }
+            </div>
+        </div>
+
+        <!-- Notes Card -->
+        <div class="bg-dark-800 rounded-xl border border-dark-700 shadow-xl overflow-hidden">
+             <div class="p-6 border-b border-dark-700">
+                <h2 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-note-sticky text-primary"></i> Sipariş Notları
+                </h2>
+            </div>
+            <div class="p-6">
+                @if(!string.IsNullOrEmpty(Model.OrderNotes))
+                {
+                    <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                        <p class="text-yellow-100 text-sm italic">
+                            "@Model.OrderNotes"
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-gray-500 text-sm italic py-2">Sipariş notu eklenmemiş.</p>
+                }
+            </div>
+        </div>
+
+    </div>
+</div>

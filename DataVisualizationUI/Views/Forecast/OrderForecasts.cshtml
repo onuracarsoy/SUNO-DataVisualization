@@ -1,0 +1,10 @@
+﻿
+@{
+    ViewData["Title"] = "Sipariş Tahminleri";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@await Component.InvokeAsync("_ForecastOrderPaymentMethodComponentPartial")
+<br />
+@await Component.InvokeAsync("_ForecastOrderCountryComponentPartial")
+
