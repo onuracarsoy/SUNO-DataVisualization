@@ -60,7 +60,8 @@ dotnet run
 - `ViewComponents`: Dashboard widget'ları ve bileşenleri.
 - `Services`: İş mantığı, AI servisleri ve ML servisleri.
 - `Context`: DBContext ve veri katmanı.
-- `MLModels`: ML.NET tahmin modelleri ve eğitim mantığı.
+
+
 
 <img width="1887" height="858" alt="Ekran görüntüsü 2026-01-19 231024" src="https://github.com/user-attachments/assets/857b6861-94e4-432d-bca4-22ed94f23475" />
 <img width="1882" height="862" alt="Ekran görüntüsü 2026-01-19 230954" src="https://github.com/user-attachments/assets/78e07ca9-fcd0-4cfa-b428-7b94ea962450" />
