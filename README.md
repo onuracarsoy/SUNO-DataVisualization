@@ -205,6 +205,4 @@ Dashboard screenshot 2
 Made with ❤️ using .NET 10 and modern AI/ML tools.
 
 
-<img wi
-
 
