@@ -182,32 +182,14 @@ Refer to the project `Controllers` and `Endpoints` folders for a complete, up-to
 
 ## Screenshots
 
-(Images are preserved from the repository.)
-
 Dashboard screenshot 1  
 <img width="1887" height="858" alt="Dashboard screenshot" src="https://github.com/user-attachments/assets/857b6861-94e4-432d-bca4-22ed94f23475" />
 
 Dashboard screenshot 2  
 <img width="1882" height="862" alt="Dashboard screenshot 2" src="https://github.com/user-attachments/assets/78e07ca9-fcd0-4cfa-b428-7b94ea962450" />
 
----
 
-## Contributing
 
-Contributions are welcome! Suggested workflow:
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/my-feature`
-3. Commit your changes and push
-4. Open a Pull Request describing your changes
-
-Please open issues for bugs or feature requests.
-
----
-
-## License
-
-This project is open source. Add a LICENSE file to specify the exact license (e.g., MIT) if desired.
 
 ---
 
@@ -220,12 +202,7 @@ This project is open source. Add a LICENSE file to specify the exact license (e.
 
 ---
 
-## Contact
 
-Maintainer: onuracarsoy  
-For questions or feedback, please open an issue or reach out via GitHub.
-
----
 
 Made with ❤️ using .NET 10 and modern AI/ML tools.
 
