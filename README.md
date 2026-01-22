@@ -21,10 +21,8 @@ A modern and extensible business intelligence dashboard built with .NET 10. This
 - [Project Structure](#project-structure)
 - [API & Endpoints (summary)](#api--endpoints-summary)
 - [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
 - [Acknowledgments](#acknowledgments)
-- [Contact](#contact)
+
 
 ---
 
